@@ -11,5 +11,12 @@
 <body>
     <h1>Hello World</h1>
 </body>
+<script>
+    var userAgent = navigator.userAgent;
+    var isIOS = /iPhone|iPad|iPod/i.test(userAgent);
+    var inWindowsWechat = /WindowsWechat/i.test(userAgent);
+    var app = isIOS && inMicroMessenger ? '友米贷' : escape('友米贷');
+    console.log('app: ', app);
+</script>
 
 </html>
