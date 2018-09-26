@@ -3,22 +3,340 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>注册下载</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+        }
+        
+        img {
+            max-width: 100%;
+        }
+        
+        a {
+            text-decoration: none;
+        }
+        
+        html,
+        body {
+            font-size: 14px;
+            line-height: 1.5;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .wrap {
+            background: url(images/bg.jpg) no-repeat;
+            background-size: cover;
+            overflow: hidden;
+        }
+        
+        .box {
+            width: 90%;
+            background-color: #fff;
+            margin: 70% 5% 0;
+            border-radius: 5px;
+            padding: 10px 20px;
+        }
+        
+        .form {
+            padding: 10px;
+            border-bottom: #edeef6 1px solid;
+            display: flex;
+            position: relative;
+        }
+        
+        .form:last-child {
+            border-bottom: none;
+        }
+        
+        .form label {
+            margin-top: 7px;
+        }
+        
+        .form input {
+            flex: 1;
+            margin-left: 10px;
+            border: none;
+            height: 40px;
+            line-height: 40px;
+            font-size: 14px;
+        }
+        
+        .form-code a {
+            position: absolute;
+            right: 0;
+            top: 12px;
+            display: block;
+            padding: 6px 13px;
+            border: #d8d8d8 1px solid;
+            border-radius: 20px;
+            color: #f50;
+        }
+        
+        .btn {
+            width: 50%;
+            margin: 30px auto 0;
+            text-align: center;
+        }
+        
+        .toast {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            z-index: 99;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            border-radius: 5px;
+            transform: translate(-50%, -50%);
+        }
+        
+        .loading-wrap {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0);
+        }
+        
+        .loading {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            width: 7.6em;
+            height: 7.6em;
+            background-color: rgba(0, 0, 0, 0.5);
+            transform: translate(-50%, -50%);
+            border-radius: 5px;
+            text-align: center;
+            color: #fff;
+        }
+        /* 下载页 */
+        
+        #download {
+            display: none;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            table-layout: fixed;
+            border-collapse: collapse;
+            background: #362c51 url(images/bottom-bg.jpg) no-repeat center bottom;
+            background-size: contain;
+        }
+        /* 微信 */
+        
+        #weixin {
+            display: none;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: url(images/wxbg.jpg) repeat;
+        }
+        
+        #tip {
+            background: url(images/app-open.png) no-repeat center top;
+            -webkit-background-size: contain;
+            background-size: contain;
+            height: 368px;
+        }
+        
+        @keyframes weuiLoading {
+            0% {
+                transform: rotate3d(0, 0, 1, 0deg);
+            }
+            100% {
+                transform: rotate3d(0, 0, 1, 360deg);
+            }
+        }
+        
+        .loading i {
+            display: inline-block;
+            width: 38px;
+            height: 38px;
+            margin-top: 20px;
+            vertical-align: baseline;
+            background: transparent url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+PHBhdGggZmlsbD0ibm9uZSIgZD0iTTAgMGgxMDB2MTAwSDB6Ii8+PHJlY3Qgd2lkdGg9IjciIGhlaWdodD0iMjAiIHg9IjQ2LjUiIHk9IjQwIiBmaWxsPSIjRTlFOUU5IiByeD0iNSIgcnk9IjUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgLTMwKSIvPjxyZWN0IHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiB4PSI0Ni41IiB5PSI0MCIgZmlsbD0iIzk4OTY5NyIgcng9IjUiIHJ5PSI1IiB0cmFuc2Zvcm09InJvdGF0ZSgzMCAxMDUuOTggNjUpIi8+PHJlY3Qgd2lkdGg9IjciIGhlaWdodD0iMjAiIHg9IjQ2LjUiIHk9IjQwIiBmaWxsPSIjOUI5OTlBIiByeD0iNSIgcnk9IjUiIHRyYW5zZm9ybT0icm90YXRlKDYwIDc1Ljk4IDY1KSIvPjxyZWN0IHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiB4PSI0Ni41IiB5PSI0MCIgZmlsbD0iI0EzQTFBMiIgcng9IjUiIHJ5PSI1IiB0cmFuc2Zvcm09InJvdGF0ZSg5MCA2NSA2NSkiLz48cmVjdCB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgeD0iNDYuNSIgeT0iNDAiIGZpbGw9IiNBQkE5QUEiIHJ4PSI1IiByeT0iNSIgdHJhbnNmb3JtPSJyb3RhdGUoMTIwIDU4LjY2IDY1KSIvPjxyZWN0IHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiB4PSI0Ni41IiB5PSI0MCIgZmlsbD0iI0IyQjJCMiIgcng9IjUiIHJ5PSI1IiB0cmFuc2Zvcm09InJvdGF0ZSgxNTAgNTQuMDIgNjUpIi8+PHJlY3Qgd2lkdGg9IjciIGhlaWdodD0iMjAiIHg9IjQ2LjUiIHk9IjQwIiBmaWxsPSIjQkFCOEI5IiByeD0iNSIgcnk9IjUiIHRyYW5zZm9ybT0icm90YXRlKDE4MCA1MCA2NSkiLz48cmVjdCB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgeD0iNDYuNSIgeT0iNDAiIGZpbGw9IiNDMkMwQzEiIHJ4PSI1IiByeT0iNSIgdHJhbnNmb3JtPSJyb3RhdGUoLTE1MCA0NS45OCA2NSkiLz48cmVjdCB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgeD0iNDYuNSIgeT0iNDAiIGZpbGw9IiNDQkNCQ0IiIHJ4PSI1IiByeT0iNSIgdHJhbnNmb3JtPSJyb3RhdGUoLTEyMCA0MS4zNCA2NSkiLz48cmVjdCB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgeD0iNDYuNSIgeT0iNDAiIGZpbGw9IiNEMkQyRDIiIHJ4PSI1IiByeT0iNSIgdHJhbnNmb3JtPSJyb3RhdGUoLTkwIDM1IDY1KSIvPjxyZWN0IHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiB4PSI0Ni41IiB5PSI0MCIgZmlsbD0iI0RBREFEQSIgcng9IjUiIHJ5PSI1IiB0cmFuc2Zvcm09InJvdGF0ZSgtNjAgMjQuMDIgNjUpIi8+PHJlY3Qgd2lkdGg9IjciIGhlaWdodD0iMjAiIHg9IjQ2LjUiIHk9IjQwIiBmaWxsPSIjRTJFMkUyIiByeD0iNSIgcnk9IjUiIHRyYW5zZm9ybT0icm90YXRlKC0zMCAtNS45OCA2NSkiLz48L3N2Zz4=") no-repeat;
+            background-size: 100%;
+            animation: weuiLoading 1s steps(12, end) infinite;
+        }
+        
+        .loading p {
+            font-size: 16px;
+        }
+    </style>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 </head>
 
 <body>
-    <h1>Hello World</h1>
-    <p id="p"></p>
+    <div id="download">
+        <div class="wrap">
+            <div class="box">
+                <div class="form">
+                    <label><img src="images/mobile.png"></label>
+                    <input id="mobile" type="tel" maxlength="11" placeholder="手机号">
+                </div>
+                <div class="form form-code">
+                    <label><img src="images/code.png"></label>
+                    <input id="code" type="tel" maxlength="6" placeholder="短信验证码">
+                    <a id="getcode" href="javascript:;">获取验证码</a>
+                </div>
+            </div>
+            <div class="btn"><img src="images/btn.png"></div>
+        </div>
+        <div class="loading-wrap">
+            <div class="loading">
+                <i></i>
+                <p>loading</p>
+            </div>
+        </div>
+        <div class="toast"></div>
+    </div>
+    <div id="weixin">
+        <div id="tip"></div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            if (window.navigator.userAgent.toLowerCase().match(/MicroMessenger/i) == 'micromessenger') {
+                document.getElementById('weixin').style.display = 'block';
+            } else {
+                document.getElementById('download').style.display = 'block';
+            }
+        })
+        var u = navigator.userAgent;
+        // var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1;
+        // var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+        var host = 'http://47.106.190.70:805?method=';
+
+        //获取url参数
+        function GetQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]);
+            return null;
+        }
+        var inviteCode = GetQueryString('inviter_code');
+        var inviteId = GetQueryString('channel_id');
+
+        //文字提示
+        function toast(txt) {
+            $('.toast').text(txt).fadeIn();
+            setTimeout(function() {
+                $('.toast').fadeOut();
+            }, 2000);
+        }
+
+        //获取手机验证码
+        var isClick = true;
+        $('#getcode').click(function() {
+            if (!isClick) return false;
+            if ($('#mobile').val().length !== 11) {
+                toast('请输入正确的手机号');
+                return false;
+            }
+            //发送手机验证码
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: host + "zjp02.user.mobile.vcode.get", //TODO
+                data: {
+                    params: JSON.stringify({
+                        mobile: $('#mobile').val()
+                    })
+                },
+                beforeSend: function() {
+                    //加载loading
+                    $('.loading-wrap').show();
+                },
+                success: function(data, Status) {
+                    //隐藏loading
+                    $('.loading-wrap').hide();
+                    if (data.code === 0) {
+                        toast('验证码已发送至手机');
+                        isClick = false;
+                        var time = data.obj.expire || 120,
+                            timer;
+                        timer = setInterval(function() {
+                            if (time < 1) {
+                                $('#getcode').text('获取验证码');
+                                isClick = true;
+                                clearInterval(timer);
+                                return false;
+                            }
+                            time--;
+                            $('#getcode').text(time);
+                        }, 1000);
+                    } else {
+                        toast(data.msg);
+                    }
+                },
+                error: function(err) {
+                    $('.loading-wrap').hide();
+                    toast('网络开了个小差~请稍候重试');
+                }
+            });
+        });
+
+        //提交注册
+        $('.btn').click(function() {
+            if ($('#mobile').val().length !== 11) {
+                toast('请输入正确的手机号');
+                return false;
+            }
+            if ($('#code').val().length !== 6) {
+                toast('请输入正确的验证码');
+                return false;
+            }
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: host + "zjp03.user.register.by.inviter", //TODO
+                data: {
+                    params: JSON.stringify({
+                        mobile: $('#mobile').val(),
+                        password: '', //TODO:
+                        inviter_code: inviteCode || '',
+                        channel_id: inviteId || '',
+                        vcode: $('#code').val()
+                    })
+                },
+                beforeSend: function() {
+                    //加载loading
+                    $('.loading-wrap').show();
+                },
+                success: function(data) {
+                    $('.loading-wrap').hide();
+                    if (data.code === 0) {
+                        toast('注册成功，立即下载“' + data.obj.app + '”');
+                        // var userAgent = navigator.userAgent;
+                        // var isIOS = /iPhone|iPad|iPod/i.test(userAgent);
+                        // var inMicroMessenger = /MicroMessenger/i.test(userAgent);
+                        // var app = isIOS && inMicroMessenger ? data.obj.app : escape(data.obj.app);
+                        setTimeout(function() {
+                            window.location.href = unescape(data.obj.url);
+                            console.log('data.obj.url = ' + data.obj.url);
+                        }, 1000);
+                    } else {
+                        toast(data.msg);
+                    }
+                },
+                error: function(err) {
+                    $('.loading-wrap').hide();
+                    toast('网络开了个小差~请稍候重试');
+                }
+            });
+        });
+    </script>
+
 </body>
-<script>
-    var userAgent = navigator.userAgent;
-    var isIOS = /iPhone|iPad|iPod/i.test(userAgent);
-    var inMicroMessenger = /MicroMessenger/i.test(userAgent);
-    var app = isIOS && inMicroMessenger ? '友米贷' : escape('友米贷');
-    document.getElementById('p').textContent = app;
-    alert('app: ' + app);
-</script>
 
 </html>
