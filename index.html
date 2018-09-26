@@ -15,7 +15,7 @@
 <script>
     var userAgent = navigator.userAgent;
     var isIOS = /iPhone|iPad|iPod/i.test(userAgent);
-    var inWindowsWechat = /WindowsWechat/i.test(userAgent);
+    var inMicroMessenger = /MicroMessenger/i.test(userAgent);
     var app = isIOS && inMicroMessenger ? '友米贷' : escape('友米贷');
     document.getElementById('p').textContent = app;
     alert('app: ' + app);
