@@ -330,6 +330,7 @@
                     }
                 },
                 error: function(err) {
+                    alert(JSON.stringify(err))
                     $('.loading-wrap').hide();
                     toast('网络开了个小差~请稍候重试');
                 }
