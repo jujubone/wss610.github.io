@@ -13,34 +13,6 @@
 </body>
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 <script>
-    $("#button").on("click", function(event) {
-        $.ajax({
-            url: "https://p.apicloud.com/api/push/message",
-            type: "POST",
-            headers: {
-                "X-APICloud-AppId": "A6081469989772",
-                "X-APICloud-AppKey": "39a925c688be32ebd9ce18bac58784c22a3aafb1.1538119775314",
-                "Content-Type": "application/json"
-            },
-            dataType: "json",
-            data: {
-                title: "消息标题h1234",
-                content: "消息内容ll",
-                type: 1, //– 消息类型，1:消息 2:通知
-                platform: 0, //0:全部平台，1：ios, 2：android
-
-            },
-            success: function(result) {
-                console.log(result);
-
-            },
-            error: function(err) {
-                console.log(err);
-
-            }
-        });
-
-    });
 </script>
 
 </html>
